@@ -14,6 +14,8 @@ connection.connect((err) => {
 
 app.use(express.json());
 
+/*  Créé une route en get ("/api/movies") qui affiche tous les films en format JSON.
+ si il y a une erreur retourne un status 500 avec un message explicatif */ 
 app.get("/api/movies", (req, res) => {
   connection.query("SELECT * FROM movies", (err, result) => {
     if (err) {
@@ -25,16 +27,10 @@ app.get("/api/movies", (req, res) => {
   });
 });
 
-app.get("/api/users", (req, res) => {
-  connection.query("SELECT * FROM users", (err, result) => {
-    if (err) {
-      console.error(err);
-      res.status(500).send("Error retrieving users from database");
-    } else {
-      res.json(result);
-    }
-  });
-});
+/*  Créé une route en post ("/api/movies") qui permet d'enregistrer un nouveau film dans la bdd .
+utilise req.body pour sécuriser ta demande
+si il y a une erreur retourne un status 500 avec un message explicatif 
+si la requête est complété, renvoie un status 200 avec un message explicatif*/ 
 
 app.post("/api/movies", (req, res) => {
   const { title, director, year, color, duration } = req.body;
@@ -52,38 +48,12 @@ app.post("/api/movies", (req, res) => {
   );
 });
 
-app.post("/api/users", (req, res) => {
-  const { firstname, lastname, email } = req.body;
-  connection.query(
-    "INSERT INTO users (firstname, lastname, email) VALUES (?, ?, ?)",
-    [firstname, lastname, email],
-    (err, result) => {
-      if (err) {
-        console.error(err);
-        res.status(500).send("Error saving the user");
-      } else {
-        res.status(200).send("User successfully saved");
-      }
-    }
-  );
-});
 
-app.put("/api/users/:id", (req, res) => {
-  const userId = req.params.id;
-  const userPropsToUpdate = req.body;
-  connection.query(
-    "UPDATE users SET ? WHERE id = ?",
-    [userPropsToUpdate, userId],
-    (err, result) => {
-      if (err) {
-        console.error(err);
-        res.status(500).send("Error updating a user");
-      } else {
-        res.status(200).send("User updated successfully 🎉");
-      }
-    }
-  );
-});
+/*  Créé une route en put ("/api/movies//id") qui permet de modifier un film dans la bdd .
+utilise req.body pour sécuriser ta demande
+utilise req.params.id pour récupérer l'id en paramètre 
+si il y a une erreur retourne un status 500 avec un message explicatif 
+si la requête est complété, renvoie un status 200 avec un message explicatif*/ 
 
 app.put("/api/movies/:id", (req, res) => {
   const movieId = req.params.id;
